@@ -1,25 +1,42 @@
-//
-//  ViewController.swift
-//  Aula_013_NotificationExercicio
-//
-//  Created by Swift on 02/02/17.
-//  Copyright © 2017 Swift. All rights reserved.
-//
 
 import UIKit
+import UserNotifications
 
-class ViewController: UIViewController {
+class ViewController: UIViewController , UNUserNotificationCenterDelegate{
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { (aceito, erro) in
+            if !aceito {
+                print("Acesso a notificações negado pelo usuário")
+            }
+        }
+        UNUserNotificationCenter.current().delegate = self
+
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    @IBAction func notificar(_ sender: UIButton) {
+        //Gatinho de escolha da data
+        let gatilho = UNTimeIntervalNotificationTrigger(timeInterval: 10.0, repeats: false)
+        
+        //Conteudo da notificacao
+        let conteudo = UNMutableNotificationContent()
+        conteudo.title = "Lembrete"
+        conteudo.body = "Este lembrete foi solicitado a 10 segundos atrás"
+        conteudo.sound = UNNotificationSound.default()
+
+        
+        
+        //Requisiçao de apresentacao da notificacao
+        let requisicao = UNNotificationRequest(identifier: "textoNotificacao", content: conteudo, trigger: gatilho)
+        
+        UNUserNotificationCenter.current().removeAllPendingNotificationRequests() //Remove as notificacoes anteriores
+        
+        UNUserNotificationCenter.current().add(requisicao, withCompletionHandler: nil)
     }
 
 
 }
+
 
